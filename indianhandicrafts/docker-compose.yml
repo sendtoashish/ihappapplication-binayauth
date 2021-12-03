@@ -1,0 +1,24 @@
+version: '3.1'
+services:
+  ihapp:
+    build: .
+    ports:
+      - 5000:8080
+    environment:
+      FLASK_APP: app.py
+      MYSQL_ROOT_PASSWORD: Password
+      MYSQL_DATABASE: ihproddb
+      MYSQL_HOST: ihdbserver
+    depends_on:
+      - ihdb
+
+  ihdb:
+    image: mysql
+    container_name: ihdbserver
+    environment:
+      MYSQL_ROOT_PASSWORD: Password
+      MYSQL_DATABASE: ihproddb
+    ports: 
+      - 5001:3306
+
+ 

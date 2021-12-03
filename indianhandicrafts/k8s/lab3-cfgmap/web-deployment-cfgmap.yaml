@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: ihapp-deployment
+
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        component: ihapp
+    spec:
+      containers:
+        - name: ihapp
+          image: antzario/ihapp
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: mysqlpassword
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: ihapp-config
+                  key: MYSQL_DATABASE
+            - name: MYSQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: ihapp-config
+                  key: MYSQL_HOST
+
+  selector:
+    matchLabels:
+      component: ihapp
