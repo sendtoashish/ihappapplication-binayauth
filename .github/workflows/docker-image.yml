@@ -24,4 +24,14 @@ jobs:
            dockerfile: indianhandicrafts/Dockerfile
            username: ${{ secrets.DOCKER_USERNAME }}
            password: ${{ secrets.DOCKER_PASSWORD }}
-      
+ 
+        - uses: sigstore/cosign-installer@main
+
+        - name: Write signing key to disk (only needed for `cosign sign --key`)
+          run: echo "${{ cosign_secret }}" > cosign.key
+
+        - name: Sign container image
+          run: |
+            cosign sign --key cosign.key \
+            docker.io/sendtoashish123/ihapp:v1
+  
