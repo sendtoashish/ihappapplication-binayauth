@@ -11,15 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Build Docker Image
-#        id: buildAndPushImage
-        uses: abhishek-070/docker-image-build-push-action@v1.0
-        with:
-          registry_url: 'docker.io'
-          repository_name: 'sendtoashish123'
-          user_name: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          image_version: 'v1.0'
-          docker_file: '.'
+        - name: Git Checkout Code
+          uses: actions/checkout@v1
+          id: git_checkout
+        - name: Build Docker Image
+#         id: buildAndPushImage
+          uses: abhishek-070/docker-image-build-push-action@v1.0
+          with:
+           registry_url: 'docker.io'
+           repository_name: 'sendtoashish123'
+           user_name: ${{ secrets.DOCKERHUB_USERNAME }}
+           password: ${{ secrets.DOCKERHUB_PASSWORD }}
+           image_version: 'v1.0'
+           docker_file: '.'
       
