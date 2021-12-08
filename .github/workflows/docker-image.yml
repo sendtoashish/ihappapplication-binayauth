@@ -18,7 +18,7 @@ jobs:
 #         id: buildAndPushImage
           uses: mr-smithers-excellent/docker-build-push@v5 
           with:
-           image: sendtoashish123
+           image: sendtoashish123/ihapp
            tags: v1
            registry: docker.io
            dockerfile: indianhandicrafts/Dockerfile
