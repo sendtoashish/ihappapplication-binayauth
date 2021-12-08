@@ -13,7 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build Docker Image
-        id: buildAndPushImage
+#        id: buildAndPushImage
         uses: abhishek-070/docker-image-build-push-action@v1.0
         with:
           registry_url: 'docker.io'
