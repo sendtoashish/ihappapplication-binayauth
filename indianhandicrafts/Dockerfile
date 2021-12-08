@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 RUN apt-get update && apt-get install -y python3 python3-pip
-COPY ./requirements.txt /app/requirements.txt
+COPY  requirements.txt /app/requirements.txt
 COPY ./app.py /app/app.py
 COPY ./adminscript.py /app/adminscript.py
 COPY ./images/ app/images
