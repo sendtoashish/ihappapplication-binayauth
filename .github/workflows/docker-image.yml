@@ -28,7 +28,7 @@ jobs:
         - uses: sigstore/cosign-installer@main
 
         - name: Write signing key to disk (only needed for `cosign sign --key`)
-          run: echo "${{ cosign_secret }}" > cosign.key
+          run: echo "${{ secrets.COSIGN_SECRET }}" > cosign.key
 
         - name: Sign container image
           run: |
