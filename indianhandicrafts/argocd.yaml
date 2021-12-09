@@ -1,0 +1,22 @@
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ihapp-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:sendtoashish/ihapp-application.git      
+    targetRevision: HEAD
+    path: indianhandicrafts/k8s/lab1-vanilla/
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
+view rawapp.yaml hosted with ❤ by GitHub
