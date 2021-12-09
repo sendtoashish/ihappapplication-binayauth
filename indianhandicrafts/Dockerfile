@@ -4,7 +4,7 @@ WORKDIR /app
 #COPY ./requirements.txt /app/requirements.txt
 COPY  indianhandicrafts/requirements.txt /app/requirements.txt
 #COPY ./app.py /app/app.py
-COPY  indianhandicrafts/app.py  app/app.py
+COPY  indianhandicrafts/app.py  /app/app.py
 #COPY ./adminscript.py /app/adminscript.py
 COPY  indianhandicrafts/adminscript.py /app/adminscript.py
 #COPY ./images/ app/images
