@@ -52,16 +52,11 @@ jobs:
     #         kubectl create namespace argocd
     #         kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
     #         kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
-        - name: copying key 
-          run: |-
-             mkdir -m 777 /tmp/id_rsa
-             cp ${{secrets.ARGO_PRIVATE}} /tmp/id_rsa
         - name: Deploy 
           uses: clowdhaus/argo-cd-action/@main
           with:
            version: 2.1.2
-           command: repo add git@github.com:sendtoashish/ihapp-application.git --ssh-private-key-path /tmp/id_rsa
-           
+           command: repo add https://github.com/sendtoashish/ihapp-application.git --username sendtoashish123@yahoo.com --password Omnamahshivay@260287           
         - name: deploy app    
           run: |-
             kubectl apply -f indianhandicrafts/argocd.yaml
