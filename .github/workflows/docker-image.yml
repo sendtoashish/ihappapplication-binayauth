@@ -55,7 +55,7 @@ jobs:
         - name: "Clone reposiory"
           uses: actions/checkout@v2
           with:
-           repository: "https://github.com/sendtoashish/ihapp-application.git"
+           repository: "sendtoashish/ihapp-application.git"
            ref: "master"
         - name: "Sync ArgoCD Application"
           uses: omegion/argocd-app-actions@master
