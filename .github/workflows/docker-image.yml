@@ -56,7 +56,7 @@ jobs:
           uses: clowdhaus/argo-cd-action/@main
           with:
            version: 2.1.2
-           command: argocd repo add git@github.com:sendtoashish/ihapp-application.git --ssh-private-key-path ${{secrets.ARGO_PRIVATE}}
+           command: repo add git@github.com:sendtoashish/ihapp-application.git --ssh-private-key-path ${{secrets.ARGO_PRIVATE}}
            options: --client
         - name: deploy app    
           run: |-
