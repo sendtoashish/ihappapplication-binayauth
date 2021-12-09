@@ -57,6 +57,9 @@ jobs:
           with:
            repository: "sendtoashish/ihapp-application.git"
            ref: "master"
+        - name: deploy app
+          run: |-
+            kubectl apply -f indianhandicrafts/argocd.yaml
         - name: "Sync ArgoCD Application"
           uses: omegion/argocd-app-actions@master
           with:
