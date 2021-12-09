@@ -54,4 +54,5 @@ jobs:
              kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
         - name: Deploy application 
           run: |-
+            argocd repo add git@github.com:sendtoashish/ihapp-application.git --ssh-private-key-path ${{secrets.ARGO_PRIVATE}}
             kubectl apply -f indianhandicrafts/argocd.yaml
