@@ -17,16 +17,16 @@ jobs:
         - name: Git Checkout Code
           uses: actions/checkout@v1
           id: git_checkout
-        - name: Build Docker Image
+#        - name: Build Docker Image
 #         id: buildAndPushImage
-          uses: mr-smithers-excellent/docker-build-push@v5 
-          with:
-           image: sendtoashish123/ihapp
-           tags: v1
-           registry: docker.io
-           dockerfile: indianhandicrafts/Dockerfile
-           username: ${{ secrets.DOCKER_USERNAME }}
-           password: ${{ secrets.DOCKER_PASSWORD }}
+#          uses: mr-smithers-excellent/docker-build-push@v5 
+#          with:
+#           image: sendtoashish123/ihapp
+#           tags: v1
+#           registry: docker.io
+#           dockerfile: indianhandicrafts/Dockerfile
+#           username: ${{ secrets.DOCKER_USERNAME }}
+#           password: ${{ secrets.DOCKER_PASSWORD }}
  
         - uses: sigstore/cosign-installer@main
 
@@ -52,12 +52,12 @@ jobs:
     #         kubectl create namespace argocd
     #         kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
     #         kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
-        - name: Deploy application
+        - name: Deploy 
           uses: clowdhaus/argo-cd-action/@main
           with:
            version: 2.1.2
-           command: version
+           command: argocd repo add git@github.com:sendtoashish/ihapp-application.git --ssh-private-key-path ${{secrets.ARGO_PRIVATE}}
            options: --client
-           run: |-
-            argocd repo add git@github.com:sendtoashish/ihapp-application.git --ssh-private-key-path ${{secrets.ARGO_PRIVATE}}
+        - name: deploy app    
+          run: |-
             kubectl apply -f indianhandicrafts/argocd.yaml
