@@ -54,4 +54,4 @@ jobs:
              kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
         - name: Deploy application 
           run: |-
-            kubectl apply -f ihapp-application/indianhandicrafts/argocd.yaml
+            kubectl apply -f indianhandicrafts/argocd.yaml
