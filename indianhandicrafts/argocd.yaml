@@ -14,7 +14,7 @@ spec:
       recurse: true
   destination:
     server: https://kubernetes.default.svc
-    namespace: ihapp
+    namespace: indian-handicraft
   syncPolicy:
     automated:
       prune: false
