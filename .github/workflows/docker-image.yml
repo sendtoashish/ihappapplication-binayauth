@@ -60,19 +60,3 @@ jobs:
         - name: deploy app
           run: |-
             kubectl apply -f indianhandicrafts/argocd.yaml
-        - name: "Sync ArgoCD Application"
-          uses: omegion/argocd-app-actions@master
-          with:
-           address: "34.72.77.159"
-           token: ${{ secrets.ARGOCD_TOKEN }}
-           appName: "ihapp"
-        - name: Deploy
-          uses: clowdhaus/argo-cd-action/@main
-          with:
-           address: "34.72.77.159"
-           token: ${{ secrets.ARGOCD_TOKEN }}
-           version: 2.1.2
-           command: repo add https://github.com/sendtoashish/ihapp-application.git --username sendtoashish123@yahoo.com --password Omnamahshivay@260287           
-        - name: deploy app    
-          run: |-
-            kubectl apply -f indianhandicrafts/argocd.yaml
