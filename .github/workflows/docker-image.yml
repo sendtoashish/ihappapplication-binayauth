@@ -7,7 +7,6 @@ env:
   PROJECT_ID: ${{secrets.PROJECT_ID}} 
   GKE_CLUSTER: github-action-gke
   GKE_ZONE: us-central1-c
-
 jobs:
 
   build:
