@@ -7,7 +7,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: git@github.com:sendtoashish/ihapp-application.git      
+    repoURL: https://github.com/sendtoashish/ihapp-application.git    
     targetRevision: HEAD
     path: indianhandicrafts/k8s/lab1-vanilla/
     directory:
