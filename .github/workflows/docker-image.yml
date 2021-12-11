@@ -37,7 +37,7 @@ jobs:
         - name: Build
           run: |-
             docker build \
-             --tag "gcr.io/$PROJECT_ID/ihapp:v1
+             --tag "gcr.io/$PROJECT_ID/ihapp:v1"
     # Push the Docker image to Google Container Registry
         - name: Publish
           run: |-
