@@ -1,8 +1,8 @@
 name: Docker Image CI
 
 on:
-  push: 
-    branches: [ master ]
+ # push: 
+ #   branches: [ master ]
 env:
   PROJECT_ID: ${{secrets.PROJECT_ID}} 
   GKE_CLUSTER: github-action-gke
@@ -67,10 +67,15 @@ jobs:
         - name: Verifying attestors 
           run: |-
             gcloud container binauthz attestors list
- #    # Creating policy 
- #       - name: Creating policy 
- #         run: |
- #           gcloud container binauthz policy import policy.yaml
+# Creating policy 
+        - name: Creating policy 
+          run: |
+            gcloud container binauthz policy import policy.yaml
+# creating appropriate IAM roles 
+        - name: creating IAM roles 
+          run: |-
+           PROJECT_NUMBER=$(gcloud projects describe "${PROJECT_ID}"  --format="value(projectNumber)")
+           BINAUTHZ_SA_EMAIL="service-${PROJECT_NUMBER}@gcp-sa-binaryauthorization.iam.gserviceaccount.com"
  
 #        - name: Get GKE Credentials
 #          run: |-
