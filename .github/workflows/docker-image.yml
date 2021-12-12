@@ -62,6 +62,10 @@ jobs:
               gcloud container binauthz attestors create $ATTESTOR_ID \
               --attestation-authority-note=$NOTE_ID \
               --attestation-authority-note-project=${PROJECT_ID}
+ # Verifying attestors 
+        - name: Verifying attestors 
+          run: |-
+            gcloud container binauthz attestors list
  #    # Creating policy 
  #       - name: Creating policy 
  #         run: |
