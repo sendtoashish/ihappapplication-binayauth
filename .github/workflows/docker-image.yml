@@ -1,8 +1,8 @@
 name: Docker Image CI
 
 on:
-  #push: 
-  #  branches: [ master ]
+  push: 
+    branches: [ master ]
 env:
   PROJECT_ID: ${{secrets.PROJECT_ID}} 
   GKE_CLUSTER: github-action-gke
@@ -38,17 +38,22 @@ jobs:
           run: |
             echo "CONTAINER_PATH=us.gcr.io/$PROJECT_ID/ihapp:v1" >> $GITHUB_ENV
  #    Build the Docker image
-        - name: Build
-          run: |-
-            docker build -t us.gcr.io/$PROJECT_ID/ihapp:v1 .
-        - name: Authorization 
-          run: |-
-           gcloud auth configure-docker -q
+#        - name: Build
+#          run: |-
+#            docker build -t us.gcr.io/$PROJECT_ID/ihapp:v1 .
+#        - name: Authorization 
+#          run: |-
+#           gcloud auth configure-docker -q
              
     # Push the Docker image to Google Container Registry
-        - name: Publish
-          run: |-
-             docker push $CONTAINER_PATH  
+ #       - name: Publish
+ #         run: |-
+ #            docker push $CONTAINER_PATH
+     # Creating policy 
+        - name: Creating policy 
+          run: |
+            gcloud container devclus policy import policy.yaml
+            
  
 #        - uses: sigstore/cosign-installer@main
 
