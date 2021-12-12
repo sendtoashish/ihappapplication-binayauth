@@ -5,7 +5,7 @@
       {
         'role': 'roles/containeranalysis.notes.occurrences.viewer',
         'members': [
-          'serviceAccount:$BINAUTHZ_SA_EMAIL'
+          'serviceAccount:service-444415434059@gcp-sa-binaryauthorization.iam.gserviceaccount.com'
         ]
       }
     ]
