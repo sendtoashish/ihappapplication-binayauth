@@ -48,7 +48,7 @@ jobs:
     # Push the Docker image to Google Container Registry
         - name: Publish
           run: |-
-           echo  docker push $CONTAINER_PATH        
+           echo  docker push  gcr.io/$PROJECT_ID/ihapp:v1  
  
 #        - uses: sigstore/cosign-installer@main
 
