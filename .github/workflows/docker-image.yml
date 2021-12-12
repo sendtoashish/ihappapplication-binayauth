@@ -1,8 +1,8 @@
 name: Docker Image CI
 
 on:
- # push: 
- #   branches: [ master ]
+  push: 
+    branches: [ master ]
 env:
   PROJECT_ID: ${{secrets.PROJECT_ID}} 
   GKE_CLUSTER: github-action-gke
@@ -76,7 +76,11 @@ jobs:
           run: |-
            PROJECT_NUMBER=$(gcloud projects describe "${PROJECT_ID}"  --format="value(projectNumber)")
            BINAUTHZ_SA_EMAIL="service-${PROJECT_NUMBER}@gcp-sa-binaryauthorization.iam.gserviceaccount.com"
- 
+           curl -X POST  \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+            --data-binary @iam.json \
+            "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID}:setIamPolicy"
 #        - name: Get GKE Credentials
 #          run: |-
 #              gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
