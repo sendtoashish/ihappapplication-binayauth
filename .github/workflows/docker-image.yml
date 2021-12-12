@@ -36,8 +36,7 @@ jobs:
     # Build the Docker image
         - name: Build
           run: |-
-            echo "CONTAINER_PATH= gcr.io/$PROJECT_ID/ihapp:v1" >> $GITHUB_ENV
-            docker build -t ${CONTAINER_PATH} 
+            docker build -t gcr.io/$PROJECT_ID/ihapp:v1 .
         - name: Authorization 
           run: |-
            gcloud auth configure-docker -q
@@ -45,6 +44,7 @@ jobs:
     # Push the Docker image to Google Container Registry
         - name: Publish
           run: |-
+           echo "CONTAINER_PATH= gcr.io/$PROJECT_ID/ihapp:v1" >> $GITHUB_ENV
            docker push ${CONTAINER_PATH}        
  
 #        - uses: sigstore/cosign-installer@main
