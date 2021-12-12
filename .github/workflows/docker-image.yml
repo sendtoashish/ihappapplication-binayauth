@@ -36,11 +36,11 @@ jobs:
             project_id: ${{secrets.PROJECT_ID}}
         - name: set env variable 
           run: |
-            echo "CONTAINER_PATH=gcr.io/$PROJECT_ID/ihapp:v1" >> $GITHUB_ENV
+            echo "CONTAINER_PATH=us.gcr.io/$PROJECT_ID/ihapp:v1" >> $GITHUB_ENV
  #    Build the Docker image
         - name: Build
           run: |-
-            docker build -t gcr.io/$PROJECT_ID/ihapp:v1  .
+            docker build -t us.gcr.io/$PROJECT_ID/ihapp:v1 .
         - name: Authorization 
           run: |-
            gcloud auth configure-docker -q
@@ -48,7 +48,7 @@ jobs:
     # Push the Docker image to Google Container Registry
         - name: Publish
           run: |-
-           echo  docker push  gcr.io/$PROJECT_ID/ihapp:v1  
+           echo  docker push  $CONTAINER_PATH  
  
 #        - uses: sigstore/cosign-installer@main
 
