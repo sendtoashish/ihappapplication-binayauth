@@ -52,7 +52,7 @@ jobs:
      # Creating policy 
         - name: Creating policy 
           run: |
-            gcloud container devclus policy import policy.yaml
+            gcloud container binautz policy import policy.yaml
             
  
 #        - uses: sigstore/cosign-installer@main
