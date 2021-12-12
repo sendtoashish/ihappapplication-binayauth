@@ -30,6 +30,8 @@ jobs:
             echo "CONTAINER_PATH=us.gcr.io/$PROJECT_ID/ihapp:v1" >> $GITHUB_ENV
             echo "NOTE_ID=my-attestors-note">> $GITHUB_ENV
             echo "ATTESTOR_ID=dev-qualified">> $GITHUB_ENV
+            echo "PROJECT_NUMBER=$(gcloud projects describe "${PROJECT_ID}"  --format="value(projectNumber)")" >> $GITHUB_ENV
+            echo "BINAUTHZ_SA_EMAIL="service-${PROJECT_NUMBER}@gcp-sa-binaryauthorization.iam.gserviceaccount.com">>$GITHUB_ENV
  #    Build the Docker image
 #        - name: Build
 #          run: |-
@@ -74,8 +76,6 @@ jobs:
 # creating appropriate IAM roles 
         - name: creating IAM roles 
           run: |-
-           PROJECT_NUMBER=$(gcloud projects describe "${PROJECT_ID}"  --format="value(projectNumber)")
-           BINAUTHZ_SA_EMAIL="service-${PROJECT_NUMBER}@gcp-sa-binaryauthorization.iam.gserviceaccount.com"
            curl -X POST  \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $(gcloud auth print-access-token)" \
