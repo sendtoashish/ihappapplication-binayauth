@@ -37,7 +37,7 @@ jobs:
         - name: Build
           run: |-
             echo "CONTAINER_PATH= gcr.io/$PROJECT_ID/ihapp:v1" >> $GITHUB_ENV
-            docker build -t ${CONTAINER_PATH} ./
+            docker build -t ${CONTAINER_PATH} 
         - name: Authorization 
           run: |-
            gcloud auth configure-docker -q
