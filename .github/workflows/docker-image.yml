@@ -48,7 +48,7 @@ jobs:
     # Push the Docker image to Google Container Registry
         - name: Publish
           run: |-
-           echo  docker push $CONTAINER_PATH  
+             docker push $CONTAINER_PATH  
  
 #        - uses: sigstore/cosign-installer@main
 
