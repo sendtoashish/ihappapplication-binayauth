@@ -78,25 +78,10 @@ jobs:
 # creating appropriate IAM roles 
         - name: creating IAM roles 
           run: |-
-           cat > ./iam_request.json << EOM
-{
-  'resource': 'projects/${PROJECT_ID}/notes/${NOTE_ID}',
-  'policy': {
-    'bindings': [
-      {
-        'role': 'roles/containeranalysis.notes.occurrences.viewer',
-        'members': [
-          'serviceAccount:${BINAUTHZ_SA_EMAIL}'
-        ]
-      }
-    ]
-  }
-}
-EOM
            curl -X POST  \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-            --data-binary @./iam_request.json \
+            --data-binary @iam.json \
             "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID}:setIamPolicy"
 #        - name: Get GKE Credentials
 #          run: |-
