@@ -40,7 +40,7 @@ jobs:
  #    Build the Docker image
         - name: Build
           run: |-
-            docker build -t $CONAINER_PATH .
+            docker build -t gcr.io/$PROJECT_ID/ihapp:v1  .
         - name: Authorization 
           run: |-
            gcloud auth configure-docker -q
