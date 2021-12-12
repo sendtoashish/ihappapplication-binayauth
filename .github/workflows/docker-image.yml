@@ -34,9 +34,9 @@ jobs:
             service_account_key: ${{secrets.GOOGLE_KEY}}
             project_id: ${{secrets.PROJECT_ID}}
     # Build the Docker image
-        - name: Build
-          run: |-
-            docker build -t gcr.io/$PROJECT_ID/ihapp:v1 .
+    #    - name: Build
+    #      run: |-
+    #        docker build -t gcr.io/$PROJECT_ID/ihapp:v1 .
         - name: Authorization 
           run: |-
            gcloud auth configure-docker -q
@@ -45,7 +45,7 @@ jobs:
         - name: Publish
           run: |-
            echo "CONTAINER_PATH= gcr.io/$PROJECT_ID/ihapp:v1" >> $GITHUB_ENV
-           docker push $CONTAINER_PATH        
+           echo  "docker push $CONTAINER_PATH"        
  
 #        - uses: sigstore/cosign-installer@main
 
