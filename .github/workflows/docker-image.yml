@@ -70,8 +70,7 @@ jobs:
         - name: creating attestor
 #          continue-on-error: true
           run: |
-              gcloud container binauthz attestors list || \
-              gcloud container binauthz attestors create $ATTESTOR_ID \
+            gcloud container binauthz attestors create $ATTESTOR_ID \
               --attestation-authority-note=$NOTE_ID \
               --attestation-authority-note-project=${PROJECT_ID}
  # Verifying attestors 
