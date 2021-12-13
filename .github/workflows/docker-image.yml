@@ -32,7 +32,7 @@ jobs:
             echo "ATTESTOR_ID=dev-qualified">> $GITHUB_ENV
             echo "PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID  --format="value(projectNumber)")" >> $GITHUB_ENV
             echo "KEY_LOCATION=global" >> $GITHUB_ENV
-            echo "KEYRING=binauthz-keys" >> $GITHUB_ENV
+            echo "KEYRING=binauthz1-keys" >> $GITHUB_ENV
             echo "KEY_NAME=DevEnv" >> $GITHUB_ENV
             echo "KEY_VERSION=1" >> $GITHUB_ENV
  #    Build the Docker image
