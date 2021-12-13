@@ -91,9 +91,10 @@ jobs:
             "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID}:setIamPolicy"
 # creating kms keys for attestors 
         - name: key creation
-          continue-on-error: true
           run: |-
+           gcloud kms keyrings describe --location=global $KEYRING || \
            gcloud kms keyrings create --quiet "${KEYRING}" --location="${KEY_LOCATION}"
+           gcloud kms keys describe $KEY_NAME --keyring=$KEYRING --location=global || \
            gcloud kms keys create   "${KEY_NAME}" \
             --keyring="${KEYRING}" --location="${KEY_LOCATION}" \
             --purpose asymmetric-signing  --default-algorithm="ec-sign-p256-sha256"
