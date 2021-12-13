@@ -5,7 +5,7 @@ on:
     branches: [ master ]
 env:
   PROJECT_ID: ${{secrets.PROJECT_ID}} 
-  GKE_CLUSTER: github-action-gke
+  GKE_CLUSTER: dev-cluster
   GKE_ZONE: us-central1-c
   
 jobs:
