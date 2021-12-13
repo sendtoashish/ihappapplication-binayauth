@@ -99,6 +99,7 @@ jobs:
            gcloud kms keys create   "${KEY_NAME}" \
             --keyring="${KEYRING}" --location="${KEY_LOCATION}" \
             --purpose asymmetric-signing  --default-algorithm="ec-sign-p256-sha256"
+            gcloud container binauthz attestors describe dev-qualified | grep -i "signatureAlgorithm" || \
             gcloud  container binauthz attestors public-keys add    \
               --attestor="${ATTESTOR_ID}"  \
               --keyversion-project="${PROJECT_ID}"  \
