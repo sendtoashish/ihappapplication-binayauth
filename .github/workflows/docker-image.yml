@@ -110,7 +110,7 @@ jobs:
 # signing container 
         - name: ferching container digest 
           run: |
-             echo "DIGEST=$(gcloud container images describe ${container_repo}:v1 --format='get(image_summary.digest)')" >> $GITHUB_ENV
+             echo "DIGEST=$(gcloud container images describe ${CONTAINER_PATH} --format='get(image_summary.digest)')" >> $GITHUB_ENV
         - name: signing container image 
           run: |
             gcloud components install beta --quiet
@@ -124,19 +124,19 @@ jobs:
              --keyversion-key="${KEY_NAME}" \
              --keyversion="${KEY_VERSION}"
 
-#        - name: Get GKE Credentials
-#          run: |-
-#              gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
-#        - name: Deploy argocd on cluster 
-#          run: |-
-#             kubectl create namespace argocd
-#             kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-#             kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
-#        - name: "Clone reposiory"
-#          uses: actions/checkout@v2
-#          with:
-#           repository: "sendtoashish/ihapp-application.git"
-#           ref: "master"
-#        - name: deploy app
-#          run: |-
-#            kubectl apply -f indianhandicrafts/argocd.yaml
+        - name: Get GKE Credentials
+          run: |-
+              gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+        - name: Deploy argocd on cluster 
+          run: |-
+             kubectl create namespace argocd
+             kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+             kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+        - name: "Clone reposiory"
+          uses: actions/checkout@v2
+          with:
+           repository: "sendtoashish/ihapp-application.git"
+           ref: "master"
+        - name: deploy app
+          run: |-
+            kubectl apply -f indianhandicrafts/argocd.yaml
