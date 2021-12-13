@@ -1,13 +1,17 @@
-name: projects/anthos-testing-271707/policy
-globalPolicyEvaluationMode: ENABLE
-defaultAdmissionRule:
-  evaluationMode: ALWAYS_DENY
-  enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
-clusterAdmissionRules:
-  us-central1-c.github-action-gke:
+#name: projects/anthos-testing-271707/policy
+#globalPolicyEvaluationMode: ENABLE
+#defaultAdmissionRule:
+#  evaluationMode: ALWAYS_DENY
+#  enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
+#clusterAdmissionRules:
+#  us-central1-c.github-action-gke:
 #    evaluationMode: REQUIRE_ATTESTATION
-    evaluationMode: ALWAYS_DENY
-    enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
+#    evaluationMode: ALWAYS_DENY
+#    enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
 #    requireAttestationsBy:
 #    - projects/anthos-testing-271707/attestors/dev-qualified
  
+    globalPolicyEvaluationMode: ENABLE
+    defaultAdmissionRule:
+      evaluationMode: ALWAYS_DENY
+      enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
