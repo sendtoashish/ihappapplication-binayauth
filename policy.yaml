@@ -8,6 +8,6 @@ clusterAdmissionRules:
 #    evaluationMode: REQUIRE_ATTESTATION
     evaluationMode: ALWAYS_DENY
     enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
-    requireAttestationsBy:
-    - projects/anthos-testing-271707/attestors/dev-qualified
+#    requireAttestationsBy:
+#    - projects/anthos-testing-271707/attestors/dev-qualified
  
