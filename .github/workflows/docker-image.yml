@@ -109,7 +109,7 @@ jobs:
 # signing container 
         - name: ferching container digest 
           run: |
-             echo "DIGEST=$(gcloud container images describe ${CONTAINER_PATH}:latest --format='get(image_summary.digest)')" >> $GITHUB_ENV
+             echo "DIGEST=$(gcloud container images describe ${CONTAINER_PATH} --format='get(image_summary.digest)')" >> $GITHUB_ENV
         - name: signing container image 
           run: |
             gcloud components install beta --quiet
