@@ -89,7 +89,7 @@ jobs:
 # creating kms keys for attestors 
         - name: key creation 
           run: |-
-           gcloud kms keyrings create --quiet "${KEYRING}" --location="${KEY_LOCATION}"
+           #gcloud kms keyrings create --quiet "${KEYRING}" --location="${KEY_LOCATION}"
            gcloud kms keys create "${KEY_NAME}" \
             --keyring="${KEYRING}" --location="${KEY_LOCATION}" \
             --purpose asymmetric-signing  --default-algorithm="ec-sign-p256-sha256"
