@@ -1,22 +1,24 @@
 name: projects/anthos-testing-271707/policy
-#globalPolicyEvaluationMode: ENABLE
-#admissionWhitelistPatterns:
- #- namePattern: quay.io/argoproj/argocd:v2.1.7
- #- namePatter:  myql
-#defaultAdmissionRule:
- # evaluationMode: ALWAYS_DENY
- # enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
-#clusterAdmissionRules:
- # us-central1-c.dev-cluster:
- #   evaluationMode: REQUIRE_ATTESTATION
-  #  evaluationMode: ALWAYS_ALLOW
-   # enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
-  #  requireAttestationsBy:
-   # - projects/anthos-testing-271707/attestors/dev-qualified
-    
+globalPolicyEvaluationMode: ENABLE
+admissionWhitelistPatterns:
+ - namePattern: quay.io/argoproj/argocd:v2.1.7
+ - namePatter:  myql
+ - namePattern: redis:6.2.4-alpine
+ - namePattern: ghcr.io/dexidp/dex:v2.27.0
 defaultAdmissionRule:
-  evaluationMode: ALWAYS_ALLOW
-  enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG    
+  evaluationMode: ALWAYS_DENY
+  enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
+clusterAdmissionRules:
+  us-central1-c.dev-cluster:
+    evaluationMode: REQUIRE_ATTESTATION
+    evaluationMode: ALWAYS_ALLOW
+    enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
+    requireAttestationsBy:
+    - projects/anthos-testing-271707/attestors/dev-qualified
+    
+#defaultAdmissionRule:
+#  evaluationMode: ALWAYS_ALLOW
+#  enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG    
     
 
  
