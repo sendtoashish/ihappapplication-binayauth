@@ -34,7 +34,7 @@ jobs:
             echo "KEYRING=binauthz1-keys" >> $GITHUB_ENV
             echo "KEY_NAME=DevEnv3" >> $GITHUB_ENV
             echo "KEY_VERSION=1" >> $GITHUB_ENV
-            echo "DIGEST=$(gcloud container images describe ${CONTAINER_PATH}:latest --format='get(image_summary.digest)')" >> $GITHUB_ENV
+            
   
  #    Build the Docker image
 #        - name: Build
@@ -107,6 +107,9 @@ jobs:
           run: |
             gcloud container binauthz attestors list
 # signing container 
+        - name: ferching container digest 
+          run: |
+             echo "DIGEST=$(gcloud container images describe ${CONTAINER_PATH}:latest --format='get(image_summary.digest)')" >> $GITHUB_ENV
         - name: signing container image 
           run: |
             gcloud components install beta --quiet
