@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: ihapp
-          image: sendtoashish123/ihapp:v1
+          image: us.gcr.io/anthos-testing-271707/ihapp:v1
           ports:
             - containerPort: 8080
           env:
