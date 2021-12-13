@@ -38,18 +38,18 @@ jobs:
             echo "KEY_VERSION=1" >> $GITHUB_ENV
             
   
- #    Build the Docker image
-#        - name: Build
-#          run: |-
-#            docker build -t us.gcr.io/$PROJECT_ID/ihapp:v1 .
-#        - name: Authorization 
-#          run: |-
-#           gcloud auth configure-docker -q
+#  Build the Docker image
+        - name: Build
+          run: |-
+            docker build -t us.gcr.io/$PROJECT_ID/ihapp:v1 .
+        - name: Authorization 
+          run: |-
+           gcloud auth configure-docker -q
              
     # Push the Docker image to Google Container Registry
- #       - name: Publish
- #         run: |-
- #            docker push $CONTAINER_PATH
+        - name: Publish
+          run: |-
+             docker push $CONTAINER_PATH
  # Creating attestors note 
         - name: creating attestors notes 
           run: |-
