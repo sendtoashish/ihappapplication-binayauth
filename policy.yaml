@@ -1,7 +1,7 @@
 name: projects/anthos-testing-271707/policy
 globalPolicyEvaluationMode: ENABLE
 admissionWhitelistPatterns:
-- quay.io/argoproj/argocd:v2.1.7
+ - namePattern: quay.io/argoproj/argocd:v2.1.7
 defaultAdmissionRule:
   evaluationMode: ALWAYS_DENY
   enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
