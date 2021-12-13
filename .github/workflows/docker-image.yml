@@ -110,7 +110,7 @@ jobs:
 # signing container 
         - name: signing container image 
           run: |
-            gcloud beta container binauthz attestations sign-and-create  \
+            gcloud container binauthz attestations sign-and-create  \
              --artifact-url="${CONTAINER_PATH}@${DIGEST}" \
              --attestor="${ATTESTOR_ID}" \
              --attestor-project="${PROJECT_ID}" \
