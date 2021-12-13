@@ -35,6 +35,8 @@ jobs:
             echo "KEYRING=binauthz1-keys" >> $GITHUB_ENV
             echo "KEY_NAME=DevEnv3" >> $GITHUB_ENV
             echo "KEY_VERSION=1" >> $GITHUB_ENV
+            echo "DIGEST=$(gcloud container images describe ${CONTAINER_PATH}:latest --format='get(image_summary.digest)')" >> $GITHUB_ENV
+  
  #    Build the Docker image
 #        - name: Build
 #          run: |-
@@ -87,9 +89,10 @@ jobs:
             --data-binary @iam.json \
             "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID}:setIamPolicy"
 # creating kms keys for attestors 
-        - name: key creation 
+        - name: key creation
+          continue-on-error: true
           run: |-
-           #gcloud kms keyrings create --quiet "${KEYRING}" --location="${KEY_LOCATION}"
+           gcloud kms keyrings create --quiet "${KEYRING}" --location="${KEY_LOCATION}"
            gcloud kms keys create   "${KEY_NAME}" \
             --keyring="${KEYRING}" --location="${KEY_LOCATION}" \
             --purpose asymmetric-signing  --default-algorithm="ec-sign-p256-sha256"
@@ -104,6 +107,18 @@ jobs:
         - name: verifying the attachment 
           run: |
             gcloud container binauthz attestors list
+# signing container 
+        - name: signing container image 
+          run: |
+            gcloud beta container binauthz attestations sign-and-create  \
+             --artifact-url="${CONTAINER_PATH}@${DIGEST}" \
+             --attestor="${ATTESTOR_ID}" \
+             --attestor-project="${PROJECT_ID}" \
+             --keyversion-project="${PROJECT_ID}" \
+             --keyversion-location="${KEY_LOCATION}" \
+             --keyversion-keyring="${KEYRING}" \
+             --keyversion-key="${KEY_NAME}" \
+             --keyversion="${KEY_VERSION}"
 
 #        - name: Get GKE Credentials
 #          run: |-
