@@ -27,6 +27,7 @@ jobs:
         - name: set env variable 
           run: |
             echo "CONTAINER_PATH=us.gcr.io/$PROJECT_ID/ihapp:v1" >> $GITHUB_ENV
+            echo "container_repo=us.gcr.io/$PROJECT_ID/ihapp" >> $GITHUB_ENV
             echo "NOTE_ID=my-attestors-note">> $GITHUB_ENV
             echo "ATTESTOR_ID=dev-qualified">> $GITHUB_ENV
             echo "PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID  --format="value(projectNumber)")" >> $GITHUB_ENV
@@ -109,7 +110,7 @@ jobs:
 # signing container 
         - name: ferching container digest 
           run: |
-             echo "DIGEST=$(gcloud container images describe ${CONTAINER_PATH} --format='get(image_summary.digest)')" >> $GITHUB_ENV
+             echo "DIGEST=$(gcloud container images describe ${container_repo}:latest --format='get(image_summary.digest)')" >> $GITHUB_ENV
         - name: signing container image 
           run: |
             gcloud components install beta --quiet
