@@ -90,10 +90,10 @@ jobs:
         - name: key creation 
           run: |-
            #gcloud kms keyrings create --quiet "${KEYRING}" --location="${KEY_LOCATION}"
-           gcloud kms keys create "${KEY_NAME}" \
+           gcloud kms keys create --quiet  "${KEY_NAME}" \
             --keyring="${KEYRING}" --location="${KEY_LOCATION}" \
             --purpose asymmetric-signing  --default-algorithm="ec-sign-p256-sha256"
-            gcloud beta container binauthz attestors public-keys add  \
+            gcloud beta container binauthz attestors public-keys add --quiet   \
               --attestor="${ATTESTOR_ID}"  \
               --keyversion-project="${PROJECT_ID}"  \
               --keyversion-location="${KEY_LOCATION}" \
