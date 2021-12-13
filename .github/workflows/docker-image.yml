@@ -115,7 +115,7 @@ jobs:
           run: |
             gcloud components install beta --quiet
             gcloud beta container binauthz attestations sign-and-create  \
-             --artifact-url="${CONTAINER_PATH}@${DIGEST}" \
+             --artifact-url="${container_repo}@${DIGEST}" \
              --attestor="${ATTESTOR_ID}" \
              --attestor-project="${PROJECT_ID}" \
              --keyversion-project="${PROJECT_ID}" \
