@@ -146,7 +146,7 @@ jobs:
           run: |-
 
            DIGEST=$(gcloud container images describe ${CONTAINER_PATH}:latest --format='get(image_summary.digest)') \
-           envsubst <ihapp-application/indianhandicrafts/k8s/lab1-vanilla/web-deployment.yaml> output.txt
+           envsubst <indianhandicrafts/k8s/lab1-vanilla/web-deployment.yaml> output.txt
            cat output.txt
              
 #            kubectl create deployment ihapp-signed --image="${CONTAINER_PATH}@${DIGEST}"
