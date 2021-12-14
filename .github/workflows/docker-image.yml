@@ -144,7 +144,7 @@ jobs:
            ref: "master"
         - name: deploy app
           run: |-
-           apt-get install gettext-base        
+
            DIGEST=$(gcloud container images describe ${CONTAINER_PATH}:latest --format='get(image_summary.digest)') \
            envsubst <ihapp-application/indianhandicrafts/k8s/lab1-vanilla/web-deployment.yaml> output.txt
            cat output.txt
