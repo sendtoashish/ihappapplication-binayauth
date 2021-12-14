@@ -40,7 +40,7 @@ jobs:
 #  Build the Docker image
         - name: Build
           run: |-
-            docker build -t us.gcr.io/$PROJECT_ID/ihapp /.
+            docker build -t us.gcr.io/$PROJECT_ID/ihapp .
         - name: Authorization 
           run: |-
            gcloud auth configure-docker -q
