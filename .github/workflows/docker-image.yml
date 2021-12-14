@@ -1,8 +1,8 @@
 name: Docker Image CI
 
 on:
-  push: 
-    branches: [ master ]
+#  push: 
+#    branches: [ master ]
 env:
   PROJECT_ID: ${{secrets.PROJECT_ID}} 
   GKE_CLUSTER: dev-cluster
@@ -38,17 +38,17 @@ jobs:
             
   
 #  Build the Docker image
-        - name: Build
-          run: |-
-            docker build -t us.gcr.io/$PROJECT_ID/ihapp .
-        - name: Authorization 
-          run: |-
-           gcloud auth configure-docker -q
+#        - name: Build
+ #         run: |-
+ #           docker build -t us.gcr.io/$PROJECT_ID/ihapp .
+ #       - name: Authorization 
+ #         run: |-
+ #          gcloud auth configure-docker -q
              
     # Push the Docker image to Google Container Registry
-        - name: Publish
-          run: |-
-             docker push $CONTAINER_PATH
+  #      - name: Publish
+  #        run: |-
+  #           docker push $CONTAINER_PATH
  # Creating attestors note 
         - name: creating attestors notes 
           run: |-
@@ -143,4 +143,5 @@ jobs:
            ref: "master"
         - name: deploy app
           run: |-
+            DIGEST=$(gcloud container images describe ${CONTAINER_PATH}:latest --format='get(image_summary.digest)')
             kubectl apply -f indianhandicrafts/argocd.yaml
