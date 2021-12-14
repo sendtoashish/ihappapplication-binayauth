@@ -1,8 +1,8 @@
 name: Docker Image CI
 
 on:
-  push: 
-    branches: [ master ]
+#  push: 
+#    branches: [ master ]
 env:
   PROJECT_ID: ${{secrets.PROJECT_ID}} 
   GKE_CLUSTER: dev-cluster
@@ -143,5 +143,6 @@ jobs:
            ref: "master"
         - name: deploy app
           run: |-
-            DIGEST=$(gcloud container images describe ${CONTAINER_PATH}:latest --format='get(image_summary.digest)')
-            kubectl apply -f indianhandicrafts/argocd.yaml
+#            kubectl apply -f ihapp-application/indianhandicrafts/k8s/lab1-vanilla/mysql-deployment.yaml
+#            kubectl create deployment ihapp-signed --image="${CONTAINER_PATH}@${DIGEST}"
+            
