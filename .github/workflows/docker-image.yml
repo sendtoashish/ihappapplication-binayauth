@@ -1,8 +1,8 @@
 name: Docker Image CI
 
 
-on:
-  push: 
+#on:
+#  push: 
     branches: [ master ]
 env:
   PROJECT_ID: ${{secrets.PROJECT_ID}} 
@@ -140,8 +140,20 @@ jobs:
         - name: "Clone reposiory"
           uses: actions/checkout@v2
           with:
-           repository: "sendtoashish/ihapp-application.git"
-           ref: "master"
+           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+           fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
+        - name: Create local changes
+          run: | 
+            cd indianhandicrafts/k8s/lab1-vanilla/
+            DIGEST=$(gcloud container images describe ${CONTAINER_PATH}:latest --format='get(image_summary.digest)') \
+            envsubst < web-deployment.yaml > web1-deployment.yaml
+            mv web1-deployment.yaml web-deployment.yaml
+        - name: Commit files
+          run: |
+           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+           git config --local user.name "github-actions[bot]"
+           git add .
+           git commit -m "Add changes" -a  
         - name: deploy app
           run: |-
 
