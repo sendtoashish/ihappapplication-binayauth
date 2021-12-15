@@ -145,7 +145,7 @@ jobs:
             envsubst < web-deployment.yaml > web1-deployment.yaml
             mv web1-deployment.yaml web-deployment.yaml
             cp -r * ../argocd
-            cd ..lab1-vanilla/web-deployment.yaml
+            cd ..
             cp sample-dep.yaml lab1-vanilla/web-deployment.yaml
         - name: Commit files
           run: |
