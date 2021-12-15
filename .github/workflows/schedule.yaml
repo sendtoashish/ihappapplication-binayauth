@@ -1,8 +1,10 @@
 name: "Replicating DIGEST to deployment file"
 
 on:
-  pull_request:
-  schedule:
+   pull_request:
+    types:
+      - closed
+   schedule:
     - cron: "*/5 * * * *"
 
 jobs:
