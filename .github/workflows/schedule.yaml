@@ -30,7 +30,7 @@ jobs:
             github_token: ${{ secrets.TOKEN }}
             branch: master
       # If job finished successfully, remove the workflow file (and tag if necessary)
-      - name: Remove scheduled job
-        uses: cardinalby/unschedule-job-action@v1
-        with:
-          ghToken: ${{ secrets.WORKFLOWS_TOKEN }}         
+   #   - name: Remove scheduled job
+   #     uses: cardinalby/unschedule-job-action@v1
+   #     with:
+   #       ghToken: ${{ secrets.WORKFLOWS_TOKEN }}         
