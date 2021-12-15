@@ -1,8 +1,8 @@
 name: Docker Image CI
 
 
-on:
-  push: 
+#on:
+#  push: 
     branches: [ master ]
 env:
   PROJECT_ID: ${{secrets.PROJECT_ID}} 
@@ -131,12 +131,7 @@ jobs:
         - name: Get GKE Credentials
           run: |-
               gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
-    #    - name: Deploy argocd on cluster 
-  #        run: |-
-   #          kubectl get namespace argocd || \
-    #         kubectl create namespace argocd
-     #        kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-      #       kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+              
         - name: "Clone reposiory"
           uses: actions/checkout@v2
           with:
@@ -159,4 +154,35 @@ jobs:
           with:
             github_token: ${{ secrets.TOKEN }}
             branch: master
-            
+        - name: Deploy argocd on cluster 
+          run: |-
+             kubectl get namespace argocd || \
+             kubectl create namespace argocd
+             kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+             kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+             kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+ #       - name: Deploy application
+       name: "example-cron-action"
+on:
+  schedule:
+    - cron:  '*/5 * * * *'    # At every 15th minute
+
+jobs:
+  singleJobName:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ env.DELAYED_JOB_CHECKOUT_REF }} # SHA that triggered your original job 
+
+      - name: Do some work
+        run: echo $GITHUB_SHA
+
+      # If job finished successfully, remove the workflow file (and tag if necessary)
+      - name: Remove scheduled job
+        uses: cardinalby/unschedule-job-action@v1
+        with:
+          ghToken: ${{ secrets.WORKFLOWS_TOKEN }}          
