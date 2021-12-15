@@ -1,7 +1,9 @@
 name: "Replicating DIGEST to deployment file"
+
 on:
+  pull_request:
   schedule:
-    - cron:  '*/10 * * * *'    # At every 15th minute
+    - cron: "*/5 * * * *"
 
 jobs:
   singleJobName:
