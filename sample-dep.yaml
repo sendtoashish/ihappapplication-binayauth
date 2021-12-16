@@ -1,5 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
+
 metadata:
   name: ihapp-deployment
 
@@ -12,7 +13,7 @@ spec:
     spec:
       containers:
         - name: ihapp
-          image: us.gcr.io/anthos-testing-271707/ihapp@{DIGEST}
+          image: us.gcr.io/anthos-testing-271707/ihapp@${DIGEST}
           ports:
             - containerPort: 8080
           env:
