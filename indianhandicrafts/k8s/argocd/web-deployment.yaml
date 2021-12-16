@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
         - name: ihapp
-          image: us.gcr.io/anthos-testing-271707/ihapp@sha256:ab25b71bc1b275664b8024088e7843a473accf4bfabca54b203b007dbcd2c9b6
+          image: us.gcr.io/anthos-testing-271707/ihapp@sha256:b21e9c398e7a004e1f96cccb790099ec26653ba27fdfbdff097bfcd62b71af1a
           ports:
             - containerPort: 8080
           env:
