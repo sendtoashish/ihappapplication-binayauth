@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: ihdbserver
-          image: docker.io/mysql
+          image: us.gcr.io/anthos-testing-271707/mysql
           ports:
             - containerPort: 3306
           env:
