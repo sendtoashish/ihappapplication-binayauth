@@ -45,7 +45,7 @@ jobs:
         - name: set env variable 
           run: |
             echo "CONTAINER_PATH=us.gcr.io/$PROJECT_ID/ihapp:$tag" >> $GITHUB_ENV
-            echo "CONTAINER_REO=us.gcr.io/$PROJECT_ID/ihapp" >> $GITHUB_ENV
+            echo "CONTAINER_REPO=us.gcr.io/$PROJECT_ID/ihapp" >> $GITHUB_ENV
             echo "NOTE_ID=my-attestors-note">> $GITHUB_ENV
             echo "ATTESTOR_ID=dev-qualified">> $GITHUB_ENV
             echo "PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID  --format="value(projectNumber)")" >> $GITHUB_ENV
