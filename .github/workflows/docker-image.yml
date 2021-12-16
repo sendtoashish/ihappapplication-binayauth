@@ -29,6 +29,7 @@ jobs:
             export_default_credentials: true
             
         - name: fetching the tag
+          id: version
           uses: juliangruber/read-file-action@v1
           with:
             path: TagVersion
