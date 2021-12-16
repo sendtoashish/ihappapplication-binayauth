@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/sendtoashish/ihapp-application.git    
     targetRevision: HEAD
-    path: indianhandicrafts/k8s/argocd
+    path: indianhandicrafts/k8s/argocd/
     directory:
       recurse: true
   destination:
