@@ -24,7 +24,7 @@ jobs:
         run: |-
               gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
       - name: Deploy argocd on cluster 
-          run: |-
+        run: |-
              kubectl get namespace argocd || \
              kubectl create namespace argocd
              kubectl apply -n argocd -f install.yaml
