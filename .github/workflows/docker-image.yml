@@ -126,19 +126,18 @@ jobs:
         - name: ferching container digest 
           run: |
              echo "DIGEST=$(gcloud container images describe ${CONTAINER_REPO}:$tag --format='get(image_summary.digest)')" >> $GITHUB_ENV
-             #        - name: signing container image
-             #          continue-on-error: true
-             #     run: |
-             # gcloud components install beta --quiet
-             # gcloud beta container binauthz attestations sign-and-create  \
-             # --artifact-url="${CONTAINER_REPO}@${DIGEST}" \
-             # --attestor="${ATTESTOR_ID}" \
-             # --attestor-project="${PROJECT_ID}" \
-             # --keyversion-project="${PROJECT_ID}" \
-             # --keyversion-location="${KEY_LOCATION}" \
-             # --keyversion-keyring="${KEYRING}" \
-             # --keyversion-key="${KEY_NAME}" \
-             # --keyversion="${KEY_VERSION}"
+        - name: signing container image
+          run: |
+            gcloud components install beta --quiet
+            gcloud beta container binauthz attestations sign-and-create  \
+            --artifact-url="${CONTAINER_REPO}@${DIGEST}" \
+            --attestor="${ATTESTOR_ID}" \
+            --attestor-project="${PROJECT_ID}" \
+            --keyversion-project="${PROJECT_ID}" \
+            --keyversion-location="${KEY_LOCATION}" \
+            --keyversion-keyring="${KEYRING}" \
+            --keyversion-key="${KEY_NAME}" \
+            --keyversion="${KEY_VERSION}"
 
         - name: Get GKE Credentials
           run: |-
