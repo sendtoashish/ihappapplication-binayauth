@@ -4,7 +4,8 @@ on:
     types: [closed]
 env:
   PROJECT_ID: ${{secrets.PROJECT_ID}} 
-  GKE_CLUSTER: dev-cluster
+  GKE_CLUSTER_DEV: dev-cluster
+  GKE_CLUSTER_TEST: test-cluster
   GKE_ZONE: us-central1-c  
 jobs:
   validate:
@@ -20,9 +21,14 @@ jobs:
             service_account_key: ${{secrets.GOOGLE_KEY}}
             project_id: ${{secrets.PROJECT_ID}}
             export_default_credentials: true
-      - name: Get GKE Credentials
+      - name: Get GKE Credentials for dev cluster
+        if: ${{github.base_ref == 'dev'}}
         run: |-
-              gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+              gcloud container clusters get-credentials "$GKE_CLUSTER_DEV" --zone "$GKE_ZONE"
+      - name: Get GKE Credentials for test cluster       
+        run: |
+             gcloud container clusters get-credentials "$GKE_CLUSTER_TEST" --zone "$GKE_ZONE"
+              
       - name: Deploy argocd on cluster 
         run: |-
              kubectl get namespace argocd || \
