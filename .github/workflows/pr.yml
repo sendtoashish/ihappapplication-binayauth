@@ -84,14 +84,14 @@ jobs:
              -H "Authorization: Bearer $(gcloud auth print-access-token)" \
              "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID}"
  # Creating attestor 
-          if: ${{ github.base_ref }}== "dev"
+          if: ${{ github.base_ref == 'dev'}}
         - name: creating attestor for dev environment
           run: |
             gcloud container binauthz attestors describe $ATTESTOR_ID || \
             gcloud container binauthz attestors create $ATTESTOR_ID \
               --attestation-authority-note=$NOTE_ID \
               --attestation-authority-note-project=${PROJECT_ID}
-          if: ${{ github.base_ref }}== "test
+          if: ${{ github.base_ref == 'test'}}
         - name: creating attestor test environment
           run: |
             gcloud container binauthz attestors describe $ATTESTOR_ID_TEST || \
@@ -103,11 +103,11 @@ jobs:
           run: |-
             gcloud container binauthz attestors list
 # Creating policy 
-          if: ${{github.base_ref}} == "dev"
+          if: ${{github.base_ref == 'dev'}} 
         - name: Creating policy for dev environment 
           run: |
             gcloud container binauthz policy import policy.yaml
-          if: ${{github.base_ref}} == "test"
+          if: ${{github.base_ref == 'test'}} 
         - name: Creating policy for test environment 
           run: | 
             gcloud container binauthz policy import policytest.yaml
@@ -121,7 +121,7 @@ jobs:
             --data-binary @iam.json \
             "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID}:setIamPolicy"
 # creating kms keys for attestors 
-          if: ${{ github.base_ref }}== "dev"
+          if: ${{ github.base_ref == 'dev'}}
         - name: key creation for dev environment 
           run: |-
            gcloud kms keyrings describe --location=global $KEYRING || \
@@ -138,7 +138,7 @@ jobs:
               --keyversion-keyring="${KEYRING}" \
               --keyversion-key="${KEY_NAME}" \
               --keyversion="${KEY_VERSION}"
-           if: ${{ github.base_ref }}== "test"
+           if: ${{ github.base_ref == 'test'}}
         - name: key cereation for test environment
           run: |-
            gcloud kms keyrings describe --location=global $KEYRING || \
@@ -164,7 +164,7 @@ jobs:
         - name: ferching container digest 
           run: |
              echo "DIGEST=$(gcloud container images describe ${CONTAINER_REPO}:$tag --format='get(image_summary.digest)')" >> $GITHUB_ENV
-          if: ${{github.base_ref}}== "dev"
+          if: ${{github.base_ref == 'dev'}}
         - name: signing container image with dev-qualified attestor
           run: |
             gcloud components install beta --quiet
@@ -177,7 +177,8 @@ jobs:
             --keyversion-keyring="${KEYRING}" \
             --keyversion-key="${KEY_NAME}" \
             --keyversion="${KEY_VERSION}"
-          if: ${{github.base_ref}}=="test"
+            
+          if: ${{github.base_ref == 'test'}}
         - name: signing container image with test qualified cluster 
           run: |
             gcloud components install beta --quiet
