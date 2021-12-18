@@ -15,4 +15,4 @@ clusterAdmissionRules:
     enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
     requireAttestationsBy:
     - projects/anthos-testing-271707/attestors/dev-qualified
-    - project/anthos-testing-271707/attestors/test-qualified
+    - projects/anthos-testing-271707/attestors/test-qualified
