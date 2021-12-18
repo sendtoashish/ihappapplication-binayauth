@@ -44,16 +44,20 @@ jobs:
           run: |
             echo "CONTAINER_PATH=us.gcr.io/$PROJECT_ID/ihapp:$tag" >> $GITHUB_ENV
             echo "CONTAINER_REPO=us.gcr.io/$PROJECT_ID/ihapp" >> $GITHUB_ENV
+            echo "APP_NAME=ihapp" >> $GITHUB_ENV
             echo "NOTE_ID=my-attestors-note">> $GITHUB_ENV
             echo "ATTESTOR_ID=dev-qualified">> $GITHUB_ENV
+            echo "ATTESTOR_ID_TEST=test-qualified" >>$GITHUB_ENV
             echo "PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID  --format="value(projectNumber)")" >> $GITHUB_ENV
             echo "KEY_LOCATION=global" >> $GITHUB_ENV
             echo "KEYRING=binauthz1-keys" >> $GITHUB_ENV
             echo "KEY_NAME=DevEnv3" >> $GITHUB_ENV
+            echo "KEY_NAME_TEST"=TestEnv" >> $GITHUB_ENV
             echo "KEY_VERSION=1" >> $GITHUB_ENV
 #  Build the Docker image
         - name: Build
           run: |-
+            gcloud container images list --repository us.gcr.io/$PROJECT_ID |grep -i $APP_NAME || \
             docker build -t us.gcr.io/$PROJECT_ID/ihapp:$tag .
         - name: Authorization 
           run: |-
@@ -62,6 +66,7 @@ jobs:
  # Push the Docker image to Google Container Registry
         - name: Publish
           run: |-
+             gcloud container images list --repository us.gcr.io/$PROJECT_ID |grep -i $APP_NAME || \
              docker push $CONTAINER_PATH
  # Creating attestors note 
         - name: creating attestors notes 
@@ -79,10 +84,18 @@ jobs:
              -H "Authorization: Bearer $(gcloud auth print-access-token)" \
              "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID}"
  # Creating attestor 
-        - name: creating attestor
+          if: ${{ github.base_ref }}== "dev"
+        - name: creating attestor for dev environment
           run: |
             gcloud container binauthz attestors describe $ATTESTOR_ID || \
             gcloud container binauthz attestors create $ATTESTOR_ID \
+              --attestation-authority-note=$NOTE_ID \
+              --attestation-authority-note-project=${PROJECT_ID}
+          if: ${{ github.base_ref }}== "test
+        - name: creating attestor test environment
+          run: |
+            gcloud container binauthz attestors describe $ATTESTOR_ID_TEST || \
+            gcloud container binauthz attestors create $ATTESTOR_ID_TEST \
               --attestation-authority-note=$NOTE_ID \
               --attestation-authority-note-project=${PROJECT_ID}
  # Verifying attestors 
@@ -90,9 +103,15 @@ jobs:
           run: |-
             gcloud container binauthz attestors list
 # Creating policy 
-        - name: Creating policy 
+          if: ${{github.base_ref}} == "dev"
+        - name: Creating policy for dev environment 
           run: |
             gcloud container binauthz policy import policy.yaml
+          if: ${{github.base_ref}} == "test"
+        - name: Creating policy for test environment 
+          run: | 
+            gcloud container binauthz policy import policytest.yaml
+           
 # creating appropriate IAM roles 
         - name: creating IAM roles 
           run: |-
@@ -102,7 +121,8 @@ jobs:
             --data-binary @iam.json \
             "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID}:setIamPolicy"
 # creating kms keys for attestors 
-        - name: key creation
+          if: ${{ github.base_ref }}== "dev"
+        - name: key creation for dev environment 
           run: |-
            gcloud kms keyrings describe --location=global $KEYRING || \
            gcloud kms keyrings create --quiet "${KEYRING}" --location="${KEY_LOCATION}"
@@ -118,6 +138,24 @@ jobs:
               --keyversion-keyring="${KEYRING}" \
               --keyversion-key="${KEY_NAME}" \
               --keyversion="${KEY_VERSION}"
+           if: ${{ github.base_ref }}== "test"
+        - name: key cereation for test environment
+          run: |-
+           gcloud kms keyrings describe --location=global $KEYRING || \
+           gcloud kms keyrings create --quiet "${KEYRING}" --location="${KEY_LOCATION}"
+           gcloud kms keys describe $KEY_NAME_TEST --keyring=$KEYRING --location=global || \
+           gcloud kms keys create   "${KEY_NAME_TEST}" \
+            --keyring="${KEYRING}" --location="${KEY_LOCATION}" \
+            --purpose asymmetric-signing  --default-algorithm="ec-sign-p256-sha256"
+            gcloud container binauthz attestors describe dev-qualified | grep -i "signatureAlgorithm" || \
+            gcloud  container binauthz attestors public-keys add    \
+              --attestor="${ATTESTOR_ID_TEST}"  \
+              --keyversion-project="${PROJECT_ID}"  \
+              --keyversion-location="${KEY_LOCATION}" \
+              --keyversion-keyring="${KEYRING}" \
+              --keyversion-key="${KEY_NAME_TEST}" \
+              --keyversion="${KEY_VERSION}"
+          
 # verifying 
         - name: verifying the attachment 
           run: |
@@ -126,7 +164,8 @@ jobs:
         - name: ferching container digest 
           run: |
              echo "DIGEST=$(gcloud container images describe ${CONTAINER_REPO}:$tag --format='get(image_summary.digest)')" >> $GITHUB_ENV
-        - name: signing container image
+          if: ${{github.base_ref}}== "dev"
+        - name: signing container image with dev-qualified attestor
           run: |
             gcloud components install beta --quiet
             gcloud beta container binauthz attestations sign-and-create  \
@@ -138,10 +177,19 @@ jobs:
             --keyversion-keyring="${KEYRING}" \
             --keyversion-key="${KEY_NAME}" \
             --keyversion="${KEY_VERSION}"
-
-        - name: Get GKE Credentials
-          run: |-
-              gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+          if: ${{github.base_ref}}=="test"
+        - name: signing container image with test qualified cluster 
+          run: |
+            gcloud components install beta --quiet
+            gcloud beta container binauthz attestations sign-and-create  \
+            --artifact-url="${CONTAINER_REPO}@${DIGEST}" \
+            --attestor="${ATTESTOR_ID_TEST}" \
+            --attestor-project="${PROJECT_ID}" \
+            --keyversion-project="${PROJECT_ID}" \
+            --keyversion-location="${KEY_LOCATION}" \
+            --keyversion-keyring="${KEYRING}" \
+            --keyversion-key="${KEY_NAME_TEST}" \
+            --keyversion="${KEY_VERSION}"
               
         - name: "Clone reposiory"
           uses: actions/checkout@v2
@@ -167,7 +215,7 @@ jobs:
           uses: ad-m/github-push-action@master
           with:
             github_token: ${{ secrets.TOKEN }}
-            branch: master
+            branch: ${{github.base_ref}}
 
  
  
