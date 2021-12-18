@@ -1,0 +1,18 @@
+name: projects/anthos-testing-271707/policytest
+globalPolicyEvaluationMode: ENABLE
+admissionWhitelistPatterns:
+ - namePattern: us.gcr.io/anthos-testing-271707/argocd
+ - namePattern:  us.gcr.io/anthos-testing-271707/mysql
+ - namePattern: us.gcr.io/anthos-testing-271707/redis
+ - namePattern: us.gcr.io/anthos-testing-271707/dex
+defaultAdmissionRule:
+  evaluationMode: ALWAYS_DENY
+  enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
+clusterAdmissionRules:
+  us-central1-c.test-cluster:
+    evaluationMode: REQUIRE_ATTESTATION
+#    evaluationMode: ALWAYS_ALLOW
+    enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
+    requireAttestationsBy:
+    - projects/anthos-testing-271707/attestors/dev-qualified
+    - project/anthos-testing-271707/attestors/test-qualified
