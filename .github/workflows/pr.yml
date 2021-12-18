@@ -206,6 +206,7 @@ jobs:
            persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
            fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
         - name: Create local changes
+          if: ${{github.base_ref == 'dev'}}
           run: | 
             cd indianhandicrafts/k8s/lab1-vanilla/
             DIGEST=$(gcloud container images describe ${CONTAINER_REPO}:$tag --format='get(image_summary.digest)') \
@@ -215,12 +216,14 @@ jobs:
             cd ..
             cp sample-dep.yaml lab1-vanilla/web-deployment.yaml
         - name: Commit files
+          if: ${{github.base_ref == 'dev'}}
           run: |
            git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
            git config --local user.name "github-actions[bot]"
            git add .
            git commit -m "Add changes" -a
         - name: Push changes
+          if: ${{github.base_ref == 'dev'}}
           uses: ad-m/github-push-action@master
           with:
             github_token: ${{ secrets.TOKEN }}
