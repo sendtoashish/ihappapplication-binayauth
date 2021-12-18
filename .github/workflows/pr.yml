@@ -52,7 +52,7 @@ jobs:
             echo "KEY_LOCATION=global" >> $GITHUB_ENV
             echo "KEYRING=binauthz1-keys" >> $GITHUB_ENV
             echo "KEY_NAME=DevEnv3" >> $GITHUB_ENV
-            echo "KEY_NAME_TEST"=TestEnv" >> $GITHUB_ENV
+            echo "KEY_NAME_TEST=TestEnv" >> $GITHUB_ENV
             echo "KEY_VERSION=1" >> $GITHUB_ENV
 #  Build the Docker image
         - name: Build
