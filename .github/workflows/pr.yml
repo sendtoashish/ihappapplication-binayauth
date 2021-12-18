@@ -136,7 +136,7 @@ jobs:
            gcloud kms keys create   "${KEY_NAME}" \
             --keyring="${KEYRING}" --location="${KEY_LOCATION}" \
             --purpose asymmetric-signing  --default-algorithm="ec-sign-p256-sha256"
-            gcloud container binauthz attestors describe $ATTESTOR_ID | grep -i "signatureAlgorithm" || \
+            gcloud container binauthz attestors describe dev-qualified| grep -i "signatureAlgorithm" || \
             gcloud  container binauthz attestors public-keys add    \
               --attestor="${ATTESTOR_ID}"  \
               --keyversion-project="${PROJECT_ID}"  \
@@ -154,7 +154,7 @@ jobs:
            gcloud kms keys create   "${KEY_NAME_TEST}" \
             --keyring="${KEYRING}" --location="${KEY_LOCATION}" \
             --purpose asymmetric-signing  --default-algorithm="ec-sign-p256-sha256"
-            gcloud container binauthz attestors describe $ATTESTOR_ID_TEST | grep -i "signatureAlgorithm" || \
+            gcloud container binauthz attestors describe test-qualified | grep -i "signatureAlgorithm" || \
             gcloud  container binauthz attestors public-keys add    \
               --attestor="${ATTESTOR_ID_TEST}"  \
               --keyversion-project="${PROJECT_ID}"  \
