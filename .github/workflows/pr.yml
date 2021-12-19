@@ -202,27 +202,22 @@ jobs:
             --keyversion-key="${KEY_NAME_TEST}" \
             --keyversion="${KEY_VERSION}"
               
- #       - name: "Clone reposiory"
- #         uses: actions/checkout@v2
- #         with:
- #          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
- #          fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
-#        - name: Create local changes
-#          if: ${{github.base_ref == 'dev'}}
-#          run: | 
-#            cd indianhandicrafts/k8s/lab1-vanilla/
-#            DIGEST=$(gcloud container images describe ${CONTAINER_REPO}:$tag --format='get(image_summary.digest)') \
-#            envsubst < web-deployment.yaml > web1-deployment.yaml
-#            mv web1-deployment.yaml web-deployment.yaml
-#            cp -r * ../argocd
-#            cd ..
-#            cp sample-dep.yaml lab1-vanilla/web-deployment.yaml
-        - name: creating local changes for branch
+        - name: "Clone reposiory"
+          uses: actions/checkout@v2
+          with:
+           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+           fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
+        - name: Create local changes
+          if: ${{github.base_ref == 'dev'}}
           run: | 
-            BRANCH=$BR envsubst < indianhandicrafts/argocd.yaml > indianhandicrafts/argocd1.yaml
-     #       mv indianhandicrafts/argocd1.yaml indianhandicrafts/argocd.yaml
-      #      cp indianhandicrafts/argocd.yaml indianhandicrafts/mainargocd.yaml
-     #       cp sampleargocd.yaml argocd.yaml
+            cd indianhandicrafts/k8s/lab1-vanilla/
+            DIGEST=$(gcloud container images describe ${CONTAINER_REPO}:$tag --format='get(image_summary.digest)') \
+            envsubst < web-deployment.yaml > web1-deployment.yaml
+            mv web1-deployment.yaml web-deployment.yaml
+            cp -r * ../argocd
+            cd ..
+            cp sample-dep.yaml lab1-vanilla/web-deployment.yaml
+
         - name: Commit files
           if: ${{github.base_ref == 'dev'}}
           run: |
