@@ -8,7 +8,6 @@ env:
   PROJECT_ID: ${{secrets.PROJECT_ID}} 
   GKE_CLUSTER: dev-cluster
   GKE_ZONE: us-central1-c    
-  BR: ${{github.head_ref}}
 jobs:
 
   build:
@@ -55,6 +54,7 @@ jobs:
             echo "KEY_NAME=DevEnv3" >> $GITHUB_ENV
             echo "KEY_NAME_TEST=TestEnv" >> $GITHUB_ENV
             echo "KEY_VERSION=1" >> $GITHUB_ENV
+            echo "BR=${{github.head_ref}}" >> $GITHUB_ENV
 #  Build the Docker image
         - name: Build
           run: |-
