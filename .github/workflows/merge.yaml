@@ -12,34 +12,7 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-  #      - name: "Clone reposiory"
-  #        uses: actions/checkout@v2
-  #        with:
-  #         persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
-  #         fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
-  #         ref: ${{github.head_ref}}
-  #      - name: changing branch details     
-  #        run: | 
-  #          cd indianhandicrafts/
-  #          CUENV=${{github.head_ref}} envsubst < argocd.yaml > argcda.yaml 
-  #          mv argcda.yaml argocd.yaml
-  #          cp argocd.yaml mainargocd.yaml
-  #          cp sampleargocd.yaml argocd.yaml 
 
-  #      - name: Commit files
-  #        if: ${{github.base_ref == 'dev'}}
-  #        run: |
-  #         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-  #         git config --local user.name "github-actions[bot]"
-  #         git add .
-  #         git commit -m "Add changes for branch" -a
- 
-  #      - name: Push changes
-  #        if: ${{github.base_ref == 'dev'}}
-  #        uses: ad-m/github-push-action@master
-  #        with:
-  #          github_token: ${{ secrets.TOKEN }}
-  #          branch: ${{github.head_ref}}
         - name: Git Checkout Code
           uses: actions/checkout@v1
           with: 
