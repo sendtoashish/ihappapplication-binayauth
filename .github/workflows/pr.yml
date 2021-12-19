@@ -190,6 +190,7 @@ jobs:
  
         - name: signing container image with test qualified cluster 
           if: ${{github.base_ref == 'test'}}
+          continue-on-error: true
           run: |
             gcloud components install beta --quiet
             gcloud beta container binauthz attestations sign-and-create  \
@@ -226,14 +227,12 @@ jobs:
             cp sampleargocd.yaml argocd.yaml
 
         - name: Commit files
-          if: ${{github.base_ref == 'dev'}}
           run: |
            git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
            git config --local user.name "github-actions[bot]"
            git add .
            git commit -m "Add changes" -a
         - name: Push changes
-          if: ${{github.base_ref == 'dev'}}
           uses: ad-m/github-push-action@master
           with:
             github_token: ${{ secrets.TOKEN }}
