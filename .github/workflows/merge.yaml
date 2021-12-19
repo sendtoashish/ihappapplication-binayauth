@@ -17,6 +17,9 @@ jobs:
         with: 
          ref: ${{github.head_ref}}
         id: git_checkout
+      - name: checking file 
+        run: |
+          cat indianhandicrafts/k8s/argocd/web-deployment.yaml
       - name: Set up Google Cloud Cli
         uses: google-github-actions/setup-gcloud@v0.2.0
         with:
