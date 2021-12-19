@@ -3,7 +3,6 @@ kind: Deployment
 
 metadata:
   name: ihapp-deployment
-
 spec:
   replicas: 3
   template:
