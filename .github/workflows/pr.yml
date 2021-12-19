@@ -8,7 +8,7 @@ env:
   PROJECT_ID: ${{secrets.PROJECT_ID}} 
   GKE_CLUSTER: dev-cluster
   GKE_ZONE: us-central1-c    
-  
+  BR: ${{github.head_ref}}
 jobs:
 
   build:
@@ -219,9 +219,9 @@ jobs:
 #            cp sample-dep.yaml lab1-vanilla/web-deployment.yaml
         - name: creating local changes for branch
           run: | 
-            BRANCH=${{github.head_ref}} envsubst < indianhandicrafts/argocd.yaml > indianhandicrafts/argocd1.yaml
-            mv indianhandicrafts/argocd1.yaml indianhandicrafts/argocd.yaml
-            cp indianhandicrafts/argocd.yaml indianhandicrafts/mainargocd.yaml
+            BRANCH=$BR envsubst < indianhandicrafts/argocd.yaml > indianhandicrafts/argocd1.yaml
+     #       mv indianhandicrafts/argocd1.yaml indianhandicrafts/argocd.yaml
+      #      cp indianhandicrafts/argocd.yaml indianhandicrafts/mainargocd.yaml
      #       cp sampleargocd.yaml argocd.yaml
         - name: Commit files
           if: ${{github.base_ref == 'dev'}}
