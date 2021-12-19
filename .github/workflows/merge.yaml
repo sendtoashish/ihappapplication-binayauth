@@ -45,6 +45,5 @@ jobs:
              kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -
 
         - name: Deploy application
-          run: |
-             cat indianhandicrafts/argocd.yaml 
+          run: | 
              kubectl apply -f indianhandicrafts/mainargocd.yaml 
