@@ -8,7 +8,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/sendtoashish/ihapp-application.git    
-    targetRevision: ${BRANCH}
+    targetRevision: ${CUENV}
     path: indianhandicrafts/k8s/argocd/
     directory:
       recurse: true
