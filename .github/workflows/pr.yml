@@ -45,7 +45,8 @@ jobs:
             echo "CONTAINER_PATH=us.gcr.io/$PROJECT_ID/ihapp:$tag" >> $GITHUB_ENV
             echo "CONTAINER_REPO=us.gcr.io/$PROJECT_ID/ihapp" >> $GITHUB_ENV
             echo "APP_NAME=ihapp" >> $GITHUB_ENV
-            echo "NOTE_ID=my-attestors-note">> $GITHUB_ENV
+            echo "NOTE_ID=my-attestors-note-dev">> $GITHUB_ENV
+            echo "NOTE_ID_TEST=my-attestors-note-test">> $GITHUB_ENV
             echo "ATTESTOR_ID=dev-qualified">> $GITHUB_ENV
             echo "ATTESTOR_ID_TEST=test-qualified" >>$GITHUB_ENV
             echo "PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID  --format="value(projectNumber)")" >> $GITHUB_ENV
@@ -67,23 +68,40 @@ jobs:
  # Push the Docker image to Google Container Registry
         - name: Publish
           run: |-
+             echo "BINAUTHZ_SA_EMAIL="service-$PROJECT_NUMBER@gcp-sa-binaryauthorization.iam.gserviceaccount.com"">> $GITHUB_ENV
              gcloud container images list --repository us.gcr.io/$PROJECT_ID |grep -i $APP_NAME || \
              docker push $CONTAINER_PATH
  # Creating attestors note 
-        - name: creating attestors notes 
+        - name: creating attestors notes for dev
+          if: ${{github.base_ref == 'dev' }}
           run: |-
-            echo "BINAUTHZ_SA_EMAIL="service-$PROJECT_NUMBER@gcp-sa-binaryauthorization.iam.gserviceaccount.com"">> $GITHUB_ENV
             curl -vvv -X POST \
             -H "Content-Type: application/json"  \
             -H "Authorization: Bearer $(gcloud auth print-access-token)"  \
             --data-binary @create_note_request.json  \
             "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/?noteId=${NOTE_ID}"
+        - name: creating attestors notes for test
+          if: ${{github.base_ref == 'test' }}
+          run: |-
+            curl -vvv -X POST \
+            -H "Content-Type: application/json"  \
+            -H "Authorization: Bearer $(gcloud auth print-access-token)"  \
+            --data-binary @create_note_request-test.json  \
+            "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/?noteId=${NOTE_ID_TEST}"           
+            
  # Verifying note is saved or not 
-        - name: verify if note is saved 
+        - name: verify if note is saved for dev
+          if: ${{github.base_ref == 'dev' }}
           run: |-
             curl -vvv  \
              -H "Authorization: Bearer $(gcloud auth print-access-token)" \
              "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID}"
+        - name: verify if note is saved for test
+          if: ${{github.base_ref == 'test' }}
+          run: |-
+            curl -vvv  \
+             -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+             "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID_TEST}"
  # Creating attestor 
  
         - name: creating attestor for dev environment
@@ -99,7 +117,7 @@ jobs:
           run: |
             gcloud container binauthz attestors describe $ATTESTOR_ID_TEST || \
             gcloud container binauthz attestors create $ATTESTOR_ID_TEST \
-              --attestation-authority-note=$NOTE_ID \
+              --attestation-authority-note=$NOTE_ID_TEST \
               --attestation-authority-note-project=${PROJECT_ID}
  # Verifying attestors 
         - name: Verifying attestors 
@@ -118,13 +136,23 @@ jobs:
             gcloud container binauthz policy import policytest.yaml
            
 # creating appropriate IAM roles 
-        - name: creating IAM roles 
+        - name: creating IAM roles for dev
+          if: ${{github.base_ref == 'dev'}}
           run: |-
            curl -X POST  \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $(gcloud auth print-access-token)" \
             --data-binary @iam.json \
             "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID}:setIamPolicy"
+        - name: creating IAM roles for test
+          if: ${{github.base_ref == 'dev'}}
+          run: |-
+           curl -X POST  \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+            --data-binary @iam.json \
+            "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID_TEST}:setIamPolicy"           
+            
 # creating kms keys for attestors 
 
         - name: key creation for dev environment
