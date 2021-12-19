@@ -221,7 +221,7 @@ jobs:
             BRANCH=${{github.head_ref}} envsubst < argocd.yaml > argocd1.yaml
             mv argocd1.yaml argocd.yaml
             cp argocd.yaml mainargocd.yaml
-            cp sampleargocd.yaml argocd.yaml
+     #       cp sampleargocd.yaml argocd.yaml
         - name: Commit files
           if: ${{github.base_ref == 'dev'}}
           run: |
