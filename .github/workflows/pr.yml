@@ -216,6 +216,12 @@ jobs:
             cp -r * ../argocd
             cd ..
             cp sample-dep.yaml lab1-vanilla/web-deployment.yaml
+            
+            cd ..
+            BRANCH=${{github.head_ref}} envsubst < argocd.yaml > argocd1.yaml
+            mv argocd1.yaml argocd.yaml
+            cp argocd.yaml mainargocd.yaml
+            cp sampleargocd.yaml argocd.yaml
         - name: Commit files
           if: ${{github.base_ref == 'dev'}}
           run: |
