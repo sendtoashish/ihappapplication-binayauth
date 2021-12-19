@@ -207,7 +207,7 @@ jobs:
           with:
            persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
            fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
-        - name: Create local changes
+        - name: Changing digest value dynamically
           if: ${{github.base_ref == 'dev'}}
           run: | 
             cd indianhandicrafts/k8s/lab1-vanilla/
@@ -216,7 +216,14 @@ jobs:
             mv web1-deployment.yaml web-deployment.yaml
             cp -r * ../argocd
             cd ..
-            cp sample-dep.yaml lab1-vanilla/web-deployment.yaml
+            cp sample-dep.yaml lab1-vanilla/web-deployment.yaml 
+        - name: changing branch details dynamically
+          run: | 
+            cd indianhandicrafts/
+            CUENV=${{github.head_ref}} envsubst < argocd.yaml > argcda.yaml 
+            mv argcda.yaml argocd.yaml
+            cp argocd.yaml mainargocd.yaml
+            cp sampleargocd.yaml argocd.yaml
 
         - name: Commit files
           if: ${{github.base_ref == 'dev'}}
