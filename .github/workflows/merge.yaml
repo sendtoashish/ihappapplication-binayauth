@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Git Checkout Code
         uses: actions/checkout@v1
+        with: 
+         ref: ${{github.head_ref}}
         id: git_checkout
       - name: Set up Google Cloud Cli
         uses: google-github-actions/setup-gcloud@v0.2.0
