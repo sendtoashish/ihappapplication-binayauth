@@ -1,0 +1,265 @@
+name: Docker Image CI
+
+
+on:
+   pull_request:
+     types: [opened]
+env:
+  PROJECT_ID: ${{secrets.PROJECT_ID}} 
+  GKE_CLUSTER: dev-cluster
+  GKE_ZONE: us-central1-c    
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    
+
+    steps:
+        - name: Git Checkout Code
+          uses: actions/checkout@v1
+          id: git_checkout
+          
+        - name: Set up Google Cloud Cli
+          uses: google-github-actions/setup-gcloud@v0.2.0
+          with:
+            service_account_key: ${{secrets.GOOGLE_KEY}}
+            project_id: ${{secrets.PROJECT_ID}}
+            export_default_credentials: true
+            
+        - name: fetching the tag
+          id: version
+          uses: juliangruber/read-file-action@v1
+          with:
+            path: TagVersion
+
+        - name: Assign tag to environment variable
+          run: |
+           echo "tag=${{ steps.version.outputs.content }}" >> $GITHUB_ENV          
+          
+        - name: Echo tag from  Env variable
+          run: |
+            echo $tag  
+            
+        - name: set env variable 
+          run: |
+            echo "CONTAINER_PATH=us.gcr.io/$PROJECT_ID/ihapp:$tag" >> $GITHUB_ENV
+            echo "CONTAINER_REPO=us.gcr.io/$PROJECT_ID/ihapp" >> $GITHUB_ENV
+            echo "APP_NAME=ihapp" >> $GITHUB_ENV
+            echo "NOTE_ID=my-attestors-note-dev">> $GITHUB_ENV
+            echo "NOTE_ID_TEST=my-attestors-note-test">> $GITHUB_ENV
+            echo "ATTESTOR_ID=dev-qualified">> $GITHUB_ENV
+            echo "ATTESTOR_ID_TEST=test-qualified" >>$GITHUB_ENV
+            echo "PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID  --format="value(projectNumber)")" >> $GITHUB_ENV
+            echo "KEY_LOCATION=global" >> $GITHUB_ENV
+            echo "KEYRING=binauthz1-keys" >> $GITHUB_ENV
+            echo "KEY_NAME=DevEnv3" >> $GITHUB_ENV
+            echo "KEY_NAME_TEST=TestEnv" >> $GITHUB_ENV
+            echo "KEY_VERSION=1" >> $GITHUB_ENV
+            echo "BR=${{github.head_ref}}" >> $GITHUB_ENV
+#  Build the Docker image
+        - name: Build
+          run: |-
+            gcloud container images list --repository us.gcr.io/$PROJECT_ID |grep -i $APP_NAME || \
+            docker build -t us.gcr.io/$PROJECT_ID/ihapp:$tag .
+        - name: Authorization 
+          run: |-
+           gcloud auth configure-docker -q
+             
+ # Push the Docker image to Google Container Registry
+        - name: Publish
+          run: |-
+             echo "BINAUTHZ_SA_EMAIL="service-$PROJECT_NUMBER@gcp-sa-binaryauthorization.iam.gserviceaccount.com"">> $GITHUB_ENV
+             gcloud container images list --repository us.gcr.io/$PROJECT_ID |grep -i $APP_NAME || \
+             docker push $CONTAINER_PATH
+ # Creating attestors note 
+        - name: creating attestors notes for dev
+          if: ${{github.base_ref == 'dev' }}
+          run: |-
+            curl -vvv -X POST \
+            -H "Content-Type: application/json"  \
+            -H "Authorization: Bearer $(gcloud auth print-access-token)"  \
+            --data-binary @create_note_request.json  \
+            "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/?noteId=${NOTE_ID}"
+        - name: creating attestors notes for test
+          if: ${{github.base_ref == 'test' }}
+          run: |-
+            curl -vvv -X POST \
+            -H "Content-Type: application/json"  \
+            -H "Authorization: Bearer $(gcloud auth print-access-token)"  \
+            --data-binary @create_note_request-test.json  \
+            "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/?noteId=${NOTE_ID_TEST}"           
+            
+ # Verifying note is saved or not 
+        - name: verify if note is saved for dev
+          if: ${{github.base_ref == 'dev' }}
+          run: |-
+            curl -vvv  \
+             -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+             "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID}"
+        - name: verify if note is saved for test
+          if: ${{github.base_ref == 'test' }}
+          run: |-
+            curl -vvv  \
+             -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+             "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID_TEST}"
+ # Creating attestor 
+ 
+        - name: creating attestor for dev environment
+          if: ${{ github.base_ref == 'dev'}}
+          run: |
+            gcloud container binauthz attestors describe $ATTESTOR_ID || \
+            gcloud container binauthz attestors create $ATTESTOR_ID \
+              --attestation-authority-note=$NOTE_ID \
+              --attestation-authority-note-project=${PROJECT_ID}
+ 
+        - name: creating attestor test environment
+          if: ${{ github.base_ref == 'test'}}
+          run: |
+            gcloud container binauthz attestors describe $ATTESTOR_ID_TEST || \
+            gcloud container binauthz attestors create $ATTESTOR_ID_TEST \
+              --attestation-authority-note=$NOTE_ID_TEST \
+              --attestation-authority-note-project=${PROJECT_ID}
+ # Verifying attestors 
+        - name: Verifying attestors 
+          run: |-
+            gcloud container binauthz attestors list
+# Creating policy 
+
+        - name: Creating policy for dev environment 
+          if: ${{github.base_ref == 'dev'}} 
+          run: |
+            gcloud container binauthz policy import policy.yaml
+        - name: Creating policy for test environment 
+          if: ${{github.base_ref == 'test'}} 
+          run: | 
+            gcloud container binauthz policy import policytest.yaml
+           
+# creating appropriate IAM roles 
+        - name: creating IAM roles for dev
+          if: ${{github.base_ref == 'dev'}}
+          run: |-
+           curl -X POST  \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+            --data-binary @iam.json \
+            "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID}:setIamPolicy"
+        - name: creating IAM roles for test
+          if: ${{github.base_ref == 'test'}}
+          run: |-
+           curl -X POST  \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+            --data-binary @iam.json \
+            "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID_TEST}:setIamPolicy"           
+            
+# creating kms keys for attestors 
+
+        - name: key creation for dev environment
+          if: ${{ github.base_ref == 'dev'}}
+          run: |-
+           gcloud kms keyrings describe --location=global $KEYRING || \
+           gcloud kms keyrings create --quiet "${KEYRING}" --location="${KEY_LOCATION}"
+           gcloud kms keys describe $KEY_NAME --keyring=$KEYRING --location=global || \
+           gcloud kms keys create   "${KEY_NAME}" \
+            --keyring="${KEYRING}" --location="${KEY_LOCATION}" \
+            --purpose asymmetric-signing  --default-algorithm="ec-sign-p256-sha256"
+            gcloud container binauthz attestors describe dev-qualified| grep -i "signatureAlgorithm" || \
+            gcloud  container binauthz attestors public-keys add    \
+              --attestor="${ATTESTOR_ID}"  \
+              --keyversion-project="${PROJECT_ID}"  \
+              --keyversion-location="${KEY_LOCATION}" \
+              --keyversion-keyring="${KEYRING}" \
+              --keyversion-key="${KEY_NAME}" \
+              --keyversion="${KEY_VERSION}"
+  
+        - name: key cereation for test environment
+          if: ${{ github.base_ref == 'test'}}
+          run: |-
+           gcloud kms keyrings describe --location=global $KEYRING || \
+           gcloud kms keyrings create --quiet "${KEYRING}" --location="${KEY_LOCATION}"
+           gcloud kms keys describe $KEY_NAME_TEST --keyring=$KEYRING --location=global || \
+           gcloud kms keys create   "${KEY_NAME_TEST}" \
+            --keyring="${KEYRING}" --location="${KEY_LOCATION}" \
+            --purpose asymmetric-signing  --default-algorithm="ec-sign-p256-sha256"
+            gcloud container binauthz attestors describe test-qualified | grep -i "signatureAlgorithm" || \
+            gcloud  container binauthz attestors public-keys add    \
+              --attestor="${ATTESTOR_ID_TEST}"  \
+              --keyversion-project="${PROJECT_ID}"  \
+              --keyversion-location="${KEY_LOCATION}" \
+              --keyversion-keyring="${KEYRING}" \
+              --keyversion-key="${KEY_NAME_TEST}" \
+              --keyversion="${KEY_VERSION}"
+          
+# verifying 
+        - name: verifying the attachment 
+          run: |
+            gcloud container binauthz attestors list
+# signing container 
+        - name: ferching container digest 
+          run: |
+             echo "DIGEST=$(gcloud container images describe ${CONTAINER_REPO}:$tag --format='get(image_summary.digest)')" >> $GITHUB_ENV
+ 
+        - name: signing container image with dev-qualified attestor
+          if: ${{github.base_ref == 'dev'}}
+          continue-on-error: true
+          run: |
+            gcloud components install beta --quiet
+            gcloud beta container binauthz attestations sign-and-create  \
+            --artifact-url="${CONTAINER_REPO}@${DIGEST}" \
+            --attestor="${ATTESTOR_ID}" \
+            --attestor-project="${PROJECT_ID}" \
+            --keyversion-project="${PROJECT_ID}" \
+            --keyversion-location="${KEY_LOCATION}" \
+            --keyversion-keyring="${KEYRING}" \
+            --keyversion-key="${KEY_NAME}" \
+            --keyversion="${KEY_VERSION}"
+            
+ 
+        - name: signing container image with test qualified cluster 
+          if: ${{github.base_ref == 'test'}}
+          continue-on-error: true
+          run: |
+            gcloud components install beta --quiet
+            gcloud beta container binauthz attestations sign-and-create  \
+            --artifact-url="${CONTAINER_REPO}@${DIGEST}" \
+            --attestor="${ATTESTOR_ID_TEST}" \
+            --attestor-project="${PROJECT_ID}" \
+            --keyversion-project="${PROJECT_ID}" \
+            --keyversion-location="${KEY_LOCATION}" \
+            --keyversion-keyring="${KEYRING}" \
+            --keyversion-key="${KEY_NAME_TEST}" \
+            --keyversion="${KEY_VERSION}"
+              
+        - name: "Clone reposiory"
+          uses: actions/checkout@v2
+          with:
+           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
+           fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
+        - name: Changing digest value dynamically
+          if: ${{github.base_ref == 'dev'}}
+          run: | 
+            cd indianhandicrafts/k8s/lab1-vanilla/
+            DIGEST=$(gcloud container images describe ${CONTAINER_REPO}:$tag --format='get(image_summary.digest)') \
+            envsubst < web-deployment.yaml > web1-deployment.yaml
+            mv web1-deployment.yaml web-deployment.yaml
+            cp -r * ../argocd
+            cd ..
+            cp sample-dep.yaml lab1-vanilla/web-deployment.yaml 
+        - name: changing branch details dynamically
+          run: | 
+            cd indianhandicrafts/
+            CUENV=${{github.head_ref}} envsubst < argocd.yaml > argcda.yaml 
+            mv argcda.yaml argocd.yaml
+            cp argocd.yaml mainargocd.yaml
+            cp sampleargocd.yaml argocd.yaml
+        - name: Commit files
+          run: |
+           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+           git config --local user.name "github-actions[bot]"
+           git add .
+           git commit -m "Add changes" -a
+        - name: Push changes
+          uses: ad-m/github-push-action@master
+          with:
+            github_token: ${{ secrets.TOKEN }}
+            branch: ${{github.head_ref}}
