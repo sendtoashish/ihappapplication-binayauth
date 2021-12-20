@@ -145,7 +145,7 @@ jobs:
             --data-binary @iam.json \
             "https://containeranalysis.googleapis.com/v1/projects/${PROJECT_ID}/notes/${NOTE_ID}:setIamPolicy"
         - name: creating IAM roles for test
-          if: ${{github.base_ref == 'dev'}}
+          if: ${{github.base_ref == 'test'}}
           run: |-
            curl -X POST  \
             -H "Content-Type: application/json" \
