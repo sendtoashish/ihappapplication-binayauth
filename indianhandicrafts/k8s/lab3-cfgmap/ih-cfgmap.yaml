@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: ihapp-config
-  namespace: default
-data:
-  MYSQL_DATABASE: ihproddb
-  MYSQL_HOST: ihdbserver
-  MYSQL_ROOT_PASSWORD: Password
